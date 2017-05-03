@@ -16,7 +16,7 @@ from ajvpy import Ajv
 ajv = Ajv() # options can be passed, e.g. {"allErrors": True}
 validate = ajv.compile(schema)
 valid = validate(data)
-if (!valid) print(validate.errors)
+if not valid: print(validate.errors)
 ```
 or with less code
 
@@ -33,7 +33,7 @@ or
 # ...
 ajv.addSchema(schema, 'mySchema')
 valid = ajv.validate('mySchema', data)
-if (!valid) print(ajv.errorsText())
+if not valid: print(ajv.errorsText())
 # ...
 ```
 
