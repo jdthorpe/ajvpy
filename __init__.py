@@ -105,6 +105,7 @@ class Ajv(object):
     # --------------------------------------------------
     # METHODS THAT RETURN A BOOLEAN
     # --------------------------------------------------
+
     def validate(self,schema,data):
         """ the Ajv.validate method
 
@@ -155,7 +156,7 @@ class Ajv(object):
     # --------------------------------------------------
     # METHODS THAT RETURN None
     # --------------------------------------------------
-    def addSchema(self,schema,key):
+    def addSchema(self,key,schema):
         """ the Ajv.addSchema method
 
             The add a schema to an Ajv instance
@@ -165,7 +166,7 @@ class Ajv(object):
 
             @return None
         """
-        self.inst.validate(_get_js_obj(ctx,schema),_get_js_obj(ctx,key))
+        self.inst.addSchema(_get_js_obj(ctx,key),_get_js_obj(ctx,schema))
 
     def removeSchema(self,key):
         """ the Ajv.removeSchema method
@@ -175,7 +176,7 @@ class Ajv(object):
             @param key String; the name with schema to remove
             @return None
         """
-        self.inst.validate(_get_js_obj(ctx,key))
+        self.inst.removeSchema(_get_js_obj(ctx,key))
 
     def addFormat(self,key,format):
         """ the Ajv.addFormat method
@@ -186,7 +187,7 @@ class Ajv(object):
             @param format the format to be added. 
             @return None
         """
-        self.inst.format(_get_js_obj(ctx,key))
+        self.inst.addFormat(_get_js_obj(ctx,key))
 
     def keyword(self,key,obj):
         """ the Ajv.addFormat method
@@ -211,6 +212,12 @@ class Ajv(object):
             @return None
         """
         self.inst.addKeyword(_get_js_obj(ctx,name),_get_js_obj(ctx,definition))
+
+    def __getattribute__(self, name):
+        if name == "errors":
+            return _get_py_obj(ctx,self.inst.errors)
+        else:
+            return object.__getattribute__(self, name)
 
 class validator(object):
     def __init__(self,inst):

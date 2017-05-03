@@ -3,6 +3,40 @@ A very thin wrapper around the awesome
 JavaScript.  Depends on the [PyV8](https://pypi.python.org/pypi/PyV8/0.5)
 package.  Just use `import Ajv from ajvpy`, and away you go.
 
-See the official [AJV Readme](https://github.com/epoberezkin/ajv) for 
-API documentation.
+## Getting started
+
+Note that the only real change is that you need to drop the JavaScript's
+`new` and `var` operators.  See the official [AJV
+Readme](https://github.com/epoberezkin/ajv) for API documentation. 
+
+The fastest validation call:
+
+```python
+from ajvpy import Ajv 
+ajv = Ajv() # options can be passed, e.g. {"allErrors": True}
+validate = ajv.compile(schema)
+valid = validate(data)
+if (!valid) print(validate.errors)
+```
+or with less code
+
+```python
+# ...
+valid = ajv.validate(schema, data)
+if not valid: print(ajv.errors)
+# ...
+```
+
+or
+
+```python
+# ...
+ajv.addSchema(schema, 'mySchema')
+valid = ajv.validate('mySchema', data)
+if (!valid) print(ajv.errorsText())
+# ...
+```
+
+See [API](https://github.com/epoberezkin/ajv#api) and
+[Options](https://github.com/epoberezkin/ajv#options) for more details.
 
