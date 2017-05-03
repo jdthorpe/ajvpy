@@ -1,10 +1,3 @@
-# TODO: comment this out
-#-- try: 
-#--     z =  __name__
-#-- except NameError: 
-#--     __name__ = "ajvpy"
-# TODO: comment this out
-
 # INITIALIZE THE CONTEXT
 import pkg_resources 
 import PyV8 
@@ -113,6 +106,8 @@ class Ajv(object):
 
             @param schema The Schema with which to validate the \code{data}.
             @param data The data to be validated.  may be any of the above foremats. 
+
+            @return boolean
         """
         return self.inst.validate(_get_js_obj(ctx,schema),_get_js_obj(ctx,data))
 
@@ -174,6 +169,7 @@ class Ajv(object):
             The remove a schema from an Ajv instance
 
             @param key String; the name with schema to remove
+
             @return None
         """
         self.inst.removeSchema(_get_js_obj(ctx,key))
@@ -185,6 +181,7 @@ class Ajv(object):
 
             @param key String; the name with format to add.
             @param format the format to be added. 
+
             @return None
         """
         self.inst.addFormat(_get_js_obj(ctx,key))
