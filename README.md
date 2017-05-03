@@ -1,6 +1,6 @@
 A very thin wrapper around the awesome
 [AJV](http://epoberezkin.github.io/ajv/) JSON validation library for
-JavaScript.  Depends on the [PyV8](https://pypi.python.org/pypi/PyV8/0.5)
+JavaScript.  Depends on the [PyV8](https://pypi.python.org/pypi/PyV8/)
 package.  Just use `import Ajv from ajvpy`, and away you go.
 
 ## Getting started
