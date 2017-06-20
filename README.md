@@ -3,7 +3,7 @@ A very thin wrapper around the awesome
 JavaScript.  Depends on the [PyV8](https://pypi.python.org/pypi/PyV8/)
 package.  Just use `import Ajv from ajvpy`, and away you go.
 
-## Getting started
+# Getting started
 
 Note that the only real change is that you need to drop the JavaScript's
 `new` and `var` operators.  See the official [AJV
