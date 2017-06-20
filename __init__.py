@@ -67,6 +67,7 @@ def _get_py_obj(ctx, obj, route=[]):
         cloned = obj
     return cloned
 
+
 def _get_js_obj(ctx,obj):
     #workaround for a problem with PyV8 where it will implicitely convert python lists to js objects
     #-> we need to explicitely do the conversion. see also the wrapper classes for JSContext above.
@@ -94,6 +95,27 @@ class Ajv(object):
             ctx.locals["_options"] = _get_js_obj(ctx,options)
             self.inst = ctx.eval("new Ajv(_options)")
             del ctx.locals["_options"]
+
+    # --------------------------------------------------
+    # Plugin
+    # --------------------------------------------------
+
+    def plugin(self,filepath,options=None):
+        """ the Ajv.validate method
+
+            The equivalent of calling \code{var ajv = new Ajv(); ajv.validate(...)} in javascript.
+
+            @param schema The Schema with which to validate the \code{data}.
+            @param data The data to be validated.  may be any of the above foremats. 
+
+            @return boolean
+        """
+        plugin = ctx.eval("(function(){module = {exports:{}};exports = module.exports;%s;return module.exports;})()"
+                          % open(filepath).read())
+        if options is not None:
+            plugin(self.inst,_get_js_obj(ctx,options))
+        else:
+            plugin(self.inst,_get_js_obj(ctx))
 
     # --------------------------------------------------
     # METHODS THAT RETURN A BOOLEAN

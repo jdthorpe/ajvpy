@@ -40,3 +40,39 @@ if not valid: print(ajv.errorsText())
 See [API](https://github.com/epoberezkin/ajv#api) and
 [Options](https://github.com/epoberezkin/ajv#options) for more details.
 
+# Plugin Modules
+
+CommonJS and UMD modules containing custom
+[keywords](https://github.com/epoberezkin/ajv#defining-custom-keywords) and
+[formats](https://github.com/epoberezkin/ajv#api-addformat) which would be
+loaded in NodeJS via:
+
+```JavaScript
+// Create an Ajv instance
+var Ajv = requrire("ajv");
+var ajv = new Ajv();
+
+// Import the plugin module
+var my_plugin = require("some-plugin-module");
+
+// Add the keywords and/or formats to the instance
+my_plugin(ajv) 
+// or 
+my_plugin(ajv,{"My":"options"}) 
+```
+
+and which are bundled into a stand alone bundle (e.g. via
+[webpack](https://webpack.js.org/)) can be loaded onto an ajvpy instance
+like so:
+
+```Python
+# Create an Ajv instance
+from ajvpy import Ajv 
+ajv = Ajv()
+
+# Import and add the keywords and/or formats to the instance
+ajv.plugin("path/to/my/bundle.js")
+# or 
+ajv.plugin("path/to/my/bundle.js",{"My":"options"})
+```
+
