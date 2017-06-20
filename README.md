@@ -59,6 +59,7 @@ var my_plugin = require("some-plugin-module");
 my_plugin(ajv) 
 // or 
 my_plugin(ajv,{"My":"options"}) 
+
 ```
 
 and which are bundled into a stand alone bundle (e.g. via
@@ -74,5 +75,17 @@ ajv = Ajv()
 ajv.plugin("path/to/my/bundle.js")
 # or 
 ajv.plugin("path/to/my/bundle.js",{"My":"options"})
+```
+
+Or to re-use the plugin module, use:
+
+```Python
+from ajvpy import load
+
+my_module = load("path/to/my/bundle.js")
+
+ajv.plugin(my_module)
+# or 
+ajv.plugin(my_module,{"My":"options"})
 ```
 

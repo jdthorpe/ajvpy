@@ -68,6 +68,11 @@ def _get_py_obj(ctx, obj, route=[]):
     return cloned
 
 
+def load(filepath):
+    with open(filepath) as fh:
+        return ctx.eval("(function(){module = {exports:{}};exports = module.exports;%s;return module.exports;})()"
+                        % fh.read())
+
 def _get_js_obj(ctx,obj):
     #workaround for a problem with PyV8 where it will implicitely convert python lists to js objects
     #-> we need to explicitely do the conversion. see also the wrapper classes for JSContext above.
@@ -100,7 +105,7 @@ class Ajv(object):
     # Plugin
     # --------------------------------------------------
 
-    def plugin(self,filepath,options=None):
+    def plugin(self,x,options=None):
         """ the Ajv.validate method
 
             The equivalent of calling \code{var ajv = new Ajv(); ajv.validate(...)} in javascript.
@@ -110,12 +115,13 @@ class Ajv(object):
 
             @return boolean
         """
-        plugin = ctx.eval("(function(){module = {exports:{}};exports = module.exports;%s;return module.exports;})()"
-                          % open(filepath).read())
+        if isinstance(x, basestring):
+            x = load(x)
+        assert x.__class__.__name__ == 'JSFunction', "x must be a string (file path) or loaded JS module"
         if options is not None:
-            plugin(self.inst,_get_js_obj(ctx,options))
+            x(self.inst,_get_js_obj(ctx,options))
         else:
-            plugin(self.inst,_get_js_obj(ctx))
+            x(self.inst)
 
     # --------------------------------------------------
     # METHODS THAT RETURN A BOOLEAN
