@@ -62,8 +62,8 @@ my_plugin(ajv,{"My":"options"})
 
 ```
 
-and which are bundled into a stand alone bundle (see `Creating Bundles`,
-below) can be loaded onto an ajvpy instance like so:
+and which are bundled into a stand alone bundle (see `Creating Plugin
+Bundles`, below) can be loaded onto an `ajvpy` instance like so:
 
 ```Python
 # Create an Ajv instance
@@ -88,7 +88,7 @@ ajv.plugin(my_module)
 ajv.plugin(my_module,{"My":"options"})
 ```
 
-# Creating Bundles
+# Creating Plugin Bundles
 
 Plugin bundles can be created by one of the many JavaScript bundlers, such
 as [webpack](https://webpack.js.org/) or
