@@ -90,10 +90,10 @@ ajv.plugin(my_module,{"My":"options"})
 
 # Creating Plugin Bundles
 
-Plugin bundles can be created by one of the many JavaScript bundlers, such
-as [webpack](https://webpack.js.org/) or
-[Browserify](http://browserify.org/)). The simplest way to bundle a plugin
-module is to call:
+Plugin bundles can be created from node modules using one of the many
+JavaScript bundlers, such as [webpack](https://webpack.js.org/) or
+[Browserify](http://browserify.org/). The simplest way to bundle a NPM
+module containing an AJV plugin is to call:
 
 ```
 cd path/to/ajvpy
