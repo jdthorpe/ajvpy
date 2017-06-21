@@ -68,10 +68,24 @@ def _get_py_obj(ctx, obj, route=[]):
     return cloned
 
 
+def __validate_npm_package_name(x):
+    return False
+
 def load(filepath):
+    if __validate_npm_package_name(filepath):
+        filepath = _os.path.join(__dir,"plugin",filepath + ".js")
+    assert _os.path.exists(filepath), ("No such file: " + filepath)
     with open(filepath) as fh:
         return ctx.eval("(function(){module = {exports:{}};exports = module.exports;%s;return module.exports;})()"
                         % fh.read())
+
+import os as _os
+__dir = _os.path.dirname(_os.path.realpath(__file__))
+__validator_path = _os.path.join(__dir, 'js/validate-npm-package-name.js')
+__is_valid_npm_package_name = load(__validator_path)
+def __validate_npm_package_name(x):
+    assert isinstance(x, basestring)
+    return _get_py_obj(ctx,__is_valid_npm_package_name(x))["validForOldPackages"]
 
 def _get_js_obj(ctx,obj):
     #workaround for a problem with PyV8 where it will implicitely convert python lists to js objects

@@ -62,9 +62,8 @@ my_plugin(ajv,{"My":"options"})
 
 ```
 
-and which are bundled into a stand alone bundle (perhaps bundled using
-[webpack](https://webpack.js.org/) or [Browserify](http://browserify.org/))
-can be loaded onto an ajvpy instance like so:
+and which are bundled into a stand alone bundle (see `Creating Bundles`,
+below) can be loaded onto an ajvpy instance like so:
 
 ```Python
 # Create an Ajv instance
@@ -89,7 +88,34 @@ ajv.plugin(my_module)
 ajv.plugin(my_module,{"My":"options"})
 ```
 
-# Developer notes
+# Creating Bundles
+
+Plugin bundles can be created by one of the many JavaScript bundlers, such
+as [webpack](https://webpack.js.org/) or
+[Browserify](http://browserify.org/)). The simplest way to bundle a plugin
+module is to call:
+
+```
+cd path/to/ajvpy
+npm install my-favorite-ajv-plugin
+npm run bundle -- my-favorite-ajv-plugin
+```
+
+which will cause `webpack` to create a bundle of your plugin here at 
+`ajvpy/plugins/my-favorite-ajv-plugin.js` that can be used like so:
+
+```Python
+from ajvpy import Ajv 
+ajv = Ajv()
+
+# Import and add the keywords and/or formats to the instance
+ajv.plugin("my-favorite-ajv-plugin")
+# or 
+ajv.plugin("my-favorite-ajv-plugin",{"My":"options"})
+```
+
+
+# AJV Version
 
 The currently bundled version of `AJV` is 5.2.0.  To update the version of
 `AJV` used by `ajvpy`, you'll need to have [NodeJS](https://nodejs.org/)

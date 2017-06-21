@@ -2,9 +2,9 @@
   "name": "not-a-node-module",
   "version": "1.0.0",
   "description": "This file only exists for webpack'ing the ajv module",
-  "main": "index.js",
   "scripts": {
-    "webpack": "./node_modules/.bin/webpack --config webpack.config.js"
+    "webpack": "./node_modules/.bin/webpack --config webpack.config.js",
+    "bundle": "node bundler.js"
   },
   "repository": {
     "type": "git",
@@ -16,12 +16,9 @@
   ],
   "author": "Jason Thorpe",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jdthorpe/ajvpy/issues"
-  },
-  "homepage": "https://github.com/jdthorpe/ajvpy#readme",
   "devDependencies": {
     "ajv": "^5.2.0",
+    "validate-npm-package-name": "^3.0.0",
     "webpack": "^3.0.0"
   }
 }
