@@ -62,9 +62,9 @@ my_plugin(ajv,{"My":"options"})
 
 ```
 
-and which are bundled into a stand alone bundle (e.g. via
-[webpack](https://webpack.js.org/)) can be loaded onto an ajvpy instance
-like so:
+and which are bundled into a stand alone bundle (perhaps bundled using
+[webpack](https://webpack.js.org/) or [Browserify](http://browserify.org/))
+can be loaded onto an ajvpy instance like so:
 
 ```Python
 # Create an Ajv instance
@@ -89,3 +89,14 @@ ajv.plugin(my_module)
 ajv.plugin(my_module,{"My":"options"})
 ```
 
+# Developer notes
+
+The currently bundled version of `AJV` is 5.2.0.  To update the version of
+`AJV` used by `ajvpy`, you'll need node installed on you machine, and then run: 
+
+```
+cd path/to/ajvpy
+npm install
+npm install ajv@latest
+npm run webpack
+```
