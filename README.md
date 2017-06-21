@@ -92,7 +92,8 @@ ajv.plugin(my_module,{"My":"options"})
 # Developer notes
 
 The currently bundled version of `AJV` is 5.2.0.  To update the version of
-`AJV` used by `ajvpy`, you'll need node installed on you machine, and then run: 
+`AJV` used by `ajvpy`, you'll need to have [NodeJS](https://nodejs.org/)
+installed on you machine, and then run: 
 
 ```
 cd path/to/ajvpy
