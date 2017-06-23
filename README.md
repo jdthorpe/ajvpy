@@ -88,6 +88,54 @@ ajv.plugin(my_module)
 ajv.plugin(my_module,{"My":"options"})
 ```
 
+### Object Modification with AJV
+
+When using custom keywords which modify an object, the modified object may
+be accessed via the `last` attribute of an `Ajv` or `validator ` instance
+(after making the round-trip from python to JavaScript and back, of course):
+
+```Python
+import ajvpy
+ajv = ajvpy.Ajv()
+ajv.addKeyword('add-value', {
+        "modifying": True,
+        "type": "number",
+		# note that ajvpy._eval(...) is not encouraged, see below
+        "compile": ajvpy._eval("""(function (schema) {
+            return (function (data, path, parent, key) {
+                try {
+                    parent[key] += schema;
+                    return true;
+                }
+                catch (err) {
+                    return false;
+                }
+            });
+        })"""),
+		"metaschema":{"type":"number"},
+		})
+
+x = {"value":1}
+
+ajv.validate({
+	"type":"object",
+	"properties":{
+		"value":{
+			"type":"number",
+			"add-value":3
+			}
+		},
+	},x)
+
+x
+#> {'value': 1}
+ajv.last
+#> {'value': 4}
+```
+<sub><sup>** note that `ajvpy._eval(...)` evaluates JS code in the global scope and
+is not encouraged.  Loading external UMD or CommonJS modules via
+`ajvpy.load()` is preferred.</sup></sub>
+
 # Creating Plugin Bundles
 
 Plugin bundles can be created from node modules using one of the many

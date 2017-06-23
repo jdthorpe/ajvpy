@@ -7,6 +7,9 @@ ctx = PyV8.JSContext()
 ctx.enter() 
 ctx.eval(ajv_js)
 
+def _eval(x):
+    return ctx.eval("(%s)"%x)
+
 # ------------------------------
 # HELPER FUNCTIONS BORROWED FROM: 
 # http://stackoverflow.com/a/28652754/1519199
@@ -116,9 +119,12 @@ class Ajv(object):
             del ctx.locals["_options"]
 
     # --------------------------------------------------
-    # Plugin
+    # NON-NATIVE METHODS AND ATTRIBUTES
     # --------------------------------------------------
 
+    # --------------------
+    # Plugin
+    # --------------------
     def plugin(self,x,options=None):
         """ the Ajv.validate method
 
@@ -137,6 +143,19 @@ class Ajv(object):
         else:
             x(self.inst)
 
+    # --------------------
+    # LAST
+    # --------------------
+    @property
+    def last(self):
+        """ returns the last object validated, for compatibility with modifying keywords
+        """
+        try:
+            return _get_py_obj(ctx,self.__last)
+        except AttributeError:
+            raise AttributeError("'Ajv' has no attribute `last`; the property is only available after validating an object")
+
+
     # --------------------------------------------------
     # METHODS THAT RETURN A BOOLEAN
     # --------------------------------------------------
@@ -151,7 +170,8 @@ class Ajv(object):
 
             @return boolean
         """
-        return self.inst.validate(_get_js_obj(ctx,schema),_get_js_obj(ctx,data))
+        self.__last = _get_js_obj(ctx,data)
+        return self.inst.validate(_get_js_obj(ctx,schema),self.__last)
 
     def validateSchema(self,schema):
         """ the Ajv.validateSchema method
@@ -262,10 +282,22 @@ class validator(object):
     def __init__(self,inst):
         self.inst = inst
     def __call__(self,data):
-        return self.inst(_get_js_obj(ctx,data));
+        self.__last = _get_js_obj(ctx,data)
+        return self.inst(self.__last);
     def __getattribute__(self, name):
         if name == "errors":
             return _get_py_obj(ctx,self.inst.errors)
         else:
             return object.__getattribute__(self, name)
+    # --------------------------------------------------
+    # NON-NATIVE METHODS AND ATTRIBUTES
+    # --------------------------------------------------
+    @property
+    def last(self):
+        """ returns the last object validated, for compatibility with modifying keywords
+        """
+        try:
+            return _get_py_obj(ctx,self.__last)
+        except AttributeError:
+            raise AttributeError("'Validator' has no attribute `last`; the property is only available after validating an object")
 
