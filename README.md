@@ -52,7 +52,7 @@ ajv = ajvpy.Ajv()
 ajv.addKeyword('add-value', {
         "modifying": True,
         "type": "number",
-		# note that ajvpy._eval(...) is not encouraged, see below
+        # note that ajvpy._eval(...) is not encouraged, see below
         "compile": ajvpy._eval("""(function (schema) {
             return (function (data, path, parent, key) {
                 try {
@@ -64,20 +64,20 @@ ajv.addKeyword('add-value', {
                 }
             });
         })"""),
-		"metaschema":{"type":"number"},
-		})
+        "metaschema":{"type":"number"},
+        })
 
 x = {"value":1}
 
 ajv.validate({
-	"type":"object",
-	"properties":{
-		"value":{
-			"type":"number",
-			"add-value":3
-			}
-		},
-	},x)
+    "type":"object",
+    "properties":{
+        "value":{
+            "type":"number",
+            "add-value":3
+            }
+        },
+    },x)
 
 x
 #> {'value': 1}
