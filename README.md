@@ -107,7 +107,6 @@ var my_plugin = require("some-plugin-module");
 my_plugin(ajv) 
 // or 
 my_plugin(ajv,{"My":"options"}) 
-
 ```
 
 and which are bundled into a stand alone bundle (see `Creating Plugin
