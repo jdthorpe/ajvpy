@@ -15,20 +15,22 @@ def _eval(x):
 # http://stackoverflow.com/a/28652754/1519199
 # ------------------------------
 
-def _access_with_js(ctx, route):
+def _build_accessor_string(ctx, route):
     if len(route) == 0:
         raise Exception("route must have at least one element")
-    accessor_string = route[0]
-    for elem in route[1:]:
+    accessor_string = ""
+    for elem in route:
         if type(elem) in [str, unicode]:
             accessor_string += "['" + elem + "']"
         elif type(elem) == int:
             accessor_string += "[" + str(elem) + "]"
         else:
             raise Exception("invalid element in route, must be text or number")
-    return ctx.eval(accessor_string)
+    return accessor_string
+
 
 def _get_py_obj(ctx, obj, route=[]):
+    # for handling of objects returned by Mongodb or MongoEngine
     def dict_is_empty(dict):
         for key in dict:
             return False
@@ -41,11 +43,10 @@ def _get_py_obj(ctx, obj, route=[]):
     if isinstance(obj, list) or isinstance(obj, PyV8.JSArray):
         cloned = []
         if len(route):
-            _ = str(_access_with_js(ctx, route)) #working around a problem with PyV8 r429
-        num_elements = len(obj)
-        for index in range(num_elements):
-            elem = obj[index]
-            cloned.append(_get_py_obj(ctx, elem, route + [index]))
+            _ = str(_build_accessor_string(ctx, route)) #working around a problem with PyV8 r429
+        for i in range(len(obj)):
+            elem = obj[i]
+            cloned.append(_get_py_obj(ctx, elem, route + [i]))
     elif isinstance(obj, dict) or isinstance(obj, PyV8.JSObject):
         cloned = {}
         for key in obj.keys():
@@ -64,7 +65,7 @@ def _get_py_obj(ctx, obj, route=[]):
             else:
                 cloned_val = _get_py_obj(ctx, access(obj, key), route + [key])
             cloned[key] = cloned_val
-    elif type(obj) == str:
+    elif isinstance(obj,basestring):
         cloned = obj.decode('utf-8')
     else:
         cloned = obj
@@ -101,7 +102,16 @@ def _get_js_obj(ctx,obj):
     elif isinstance(obj, dict):
         js_obj = ctx.eval("new Object();")
         for key in obj.keys():
-            js_obj[key] = _get_js_obj(ctx,obj[key])
+            try:
+                js_obj[key] = _get_js_obj(ctx,obj[key])
+            except Exception, e:
+                # unicode keys raise a Boost.python.aubment Exception which
+                # can't be caught directly:
+                # https://mail.python.org/pipermail/cplusplus-sig/2010-April/015470.html
+                if (not str(e).startswith("Python argument types in")):
+                    raise
+                import unicodedata
+                js_obj[unicodedata.normalize('NFKD', key).encode('ascii','ignore')] = _get_js_obj(ctx,obj[key])
         return js_obj
     else:
         return obj
@@ -300,4 +310,28 @@ class validator(object):
             return _get_py_obj(ctx,self.__last)
         except AttributeError:
             raise AttributeError("'Validator' has no attribute `last`; the property is only available after validating an object")
+
+# a decorator for the clean method of MongoEngine.Document class
+_ajv = None
+def ajv_clean(schema,ajv=None):
+    global _ajv
+    from mongoengine import ValidationError
+    if ajv is None:
+        if _ajv is None:
+            _ajv = Ajv()
+        ajv = _ajv
+    validator = ajv.compile(schema)
+    def decorator(f):
+        def wrapper(self):
+            # execute ajv validator
+            if not validator(dict(self.to_mongo())):
+                msg = ", and ".join(["'%s' %s" %(e["schemaPath"],e["message"]) for e in validator.errors ])
+                msg = ", and ".join(["'%s' %s" %(e["schemaPath"],e["message"]) for e in validator.errors ])
+                err = ValidationError("AJV validation failed with message(s): "+msg)
+                err.ajv_errors = validator.errors
+                raise err
+            # execute the normal Document.clean code
+            f(self,validator.last)
+        return wrapper
+    return decorator
 
