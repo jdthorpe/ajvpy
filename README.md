@@ -3,6 +3,8 @@ A very thin wrapper around the awesome
 JavaScript.  Depends on the [PyV8](https://pypi.python.org/pypi/PyV8/)
 package.  Just use `import Ajv from ajvpy`, and away you go.
 
+`ajvpy` also [plays nicely with MongoEngine](https://gist.github.com/jdthorpe/b63883516494f65877e94e4f64e11310).
+
 # Getting started
 
 Note that the only real change is that you need to drop the JavaScript's
